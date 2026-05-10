@@ -1,5 +1,7 @@
 # HomeoAI -- AI-Powered Homeopathic Remedy Finder
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Visit%20Site-brightgreen)](https://homeoai-frontend.vercel.app)
+
 An AI-powered homeopathic analysis tool that uses **Google Gemini** to suggest classical homeopathic remedies based on a detailed symptom intake form. The system follows traditional case-taking methodology from Kent's Repertory, Boericke's Materia Medica, and Organon of Medicine.
 
 > **Disclaimer:** This is an educational tool only and does not replace professional medical advice.
