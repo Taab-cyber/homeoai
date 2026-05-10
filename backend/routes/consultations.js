@@ -1,43 +1,44 @@
 const express = require('express');
 const { verifyToken } = require('./auth');
-const { db } = require('../db');
+const { pool } = require('../db');
 
 const router = express.Router();
 
 router.use(verifyToken);
 
-router.post('/save', (req, res) => {
+router.post('/save', async (req, res) => {
   const { form_data, ai_response, top_remedies, constitutional_profile, chief_complaint } = req.body;
-  
+
   try {
-    const info = db.prepare(`
-      INSERT INTO consultations 
-      (user_id, chief_complaint, form_data, ai_response, top_remedies, constitutional_profile)
-      VALUES (?, ?, ?, ?, ?, ?)
-    `).run(
-      req.user.id,
-      chief_complaint,
-      JSON.stringify(form_data),
-      JSON.stringify(ai_response),
-      JSON.stringify(top_remedies),
-      constitutional_profile
+    const result = await pool.query(
+      `INSERT INTO consultations
+       (user_id, chief_complaint, form_data, ai_response, top_remedies, constitutional_profile)
+       VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+      [
+        req.user.id,
+        chief_complaint,
+        JSON.stringify(form_data),
+        JSON.stringify(ai_response),
+        JSON.stringify(top_remedies),
+        constitutional_profile
+      ]
     );
 
-    res.status(201).json({ message: "Saved", id: info.lastInsertRowid });
+    res.status(201).json({ message: "Saved", id: result.rows[0].id });
   } catch (error) {
     console.error('Failed to save consultation', error);
     res.status(500).json({ error: 'Failed to save consultation' });
   }
 });
 
-router.get('/', (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const rows = db.prepare(`
-      SELECT * FROM consultations WHERE user_id = ? ORDER BY created_at DESC
-    `).all(req.user.id);
+    const result = await pool.query(
+      'SELECT * FROM consultations WHERE user_id = $1 ORDER BY created_at DESC',
+      [req.user.id]
+    );
 
-    // Parse back the JSON strings for the client
-    const consultations = rows.map(r => ({
+    const consultations = result.rows.map(r => ({
       ...r,
       form_data: JSON.parse(r.form_data),
       ai_response: JSON.parse(r.ai_response),
@@ -51,16 +52,18 @@ router.get('/', (req, res) => {
   }
 });
 
-router.get('/:id', (req, res) => {
+router.get('/:id', async (req, res) => {
   try {
-    const row = db.prepare(`
-      SELECT * FROM consultations WHERE user_id = ? AND id = ?
-    `).get(req.user.id, req.params.id);
+    const result = await pool.query(
+      'SELECT * FROM consultations WHERE user_id = $1 AND id = $2',
+      [req.user.id, req.params.id]
+    );
 
-    if (!row) {
+    if (result.rows.length === 0) {
       return res.status(404).json({ error: 'Consultation not found' });
     }
 
+    const row = result.rows[0];
     const consultation = {
       ...row,
       form_data: JSON.parse(row.form_data),
