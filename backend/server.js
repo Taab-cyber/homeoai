@@ -6,6 +6,7 @@ const { initDB } = require('./db');
 const authRoutes = require('./routes/auth');
 const analyzeRoutes = require('./routes/analyze');
 const consultationRoutes = require('./routes/consultations');
+const adminRoutes = require('./routes/admin');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -27,6 +28,7 @@ initDB().catch(err => console.error('DB init error:', err));
 app.use('/api/auth', authRoutes);
 app.use('/api/analyze', analyzeRoutes);
 app.use('/api/consultations', consultationRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 

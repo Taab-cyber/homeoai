@@ -8,6 +8,7 @@ import Auth from './pages/Auth';
 import Consult from './pages/Consult';
 import Result from './pages/Result';
 import History from './pages/History';
+import AdminDashboard from './pages/AdminDashboard';
 import NotFound from './pages/NotFound';
 
 function App() {
@@ -35,13 +36,21 @@ function App() {
                 </ProtectedRoute>
               } 
             />
-            <Route 
-              path="/history" 
+            <Route
+              path="/history"
               element={
                 <ProtectedRoute>
                   <History />
                 </ProtectedRoute>
-              } 
+              }
+            />
+            <Route
+              path="/admin"
+              element={
+                <ProtectedRoute>
+                  <AdminDashboard />
+                </ProtectedRoute>
+              }
             />
             <Route path="*" element={<NotFound />} />
           </Routes>

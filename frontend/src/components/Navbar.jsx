@@ -27,6 +27,11 @@ const Navbar = () => {
               <>
                 <Link to="/consult" className="hover:text-green-200 transition-colors">New Consultation</Link>
                 <Link to="/history" className="hover:text-green-200 transition-colors">History</Link>
+                {user.role === 'admin' && (
+                  <Link to="/admin" className="hover:text-green-200 transition-colors flex items-center gap-1">
+                    <span className="text-xs">🛡️</span> Admin
+                  </Link>
+                )}
                 <div className="flex items-center gap-4 ml-4">
                   <span className="text-green-100 italic">Welcome, {user.name}</span>
                   <button 
@@ -71,6 +76,11 @@ const Navbar = () => {
               <span className="text-green-200 py-1 border-b border-green-700">Hi, {user.name}</span>
               <Link to="/consult" className="hover:text-white py-2" onClick={() => setIsMenuOpen(false)}>New Consultation</Link>
               <Link to="/history" className="hover:text-white py-2" onClick={() => setIsMenuOpen(false)}>History</Link>
+              {user.role === 'admin' && (
+                <Link to="/admin" className="hover:text-white py-2 flex items-center gap-1" onClick={() => setIsMenuOpen(false)}>
+                  <span className="text-xs">🛡️</span> Admin Dashboard
+                </Link>
+              )}
               <button onClick={() => { handleLogout(); setIsMenuOpen(false); }} className="text-left text-red-300 hover:text-red-200 py-2">
                 Logout
               </button>
